@@ -20,17 +20,40 @@ let parseTodos = (path) => {
   return todos;
 };
 
-let saveTodo = (path, todo) => {
+let appendFile = (path, contents) => {
   let fd;
   try {
     fd = fs.openSync(path, "a");
-    fs.appendFileSync(path, `${todo}${EOL}`, "utf8");
+    fs.appendFileSync(path, contents, "utf8");
   } catch (err) {
     console.log("Error: getTodos failed");
     console.log(err);
   } finally {
     if (fd !== undefined) fs.closeSync(fd);
   }
+};
+
+let writeFile = (path, contents) => {
+  let fd;
+  try {
+    fd = fs.openSync(path, "a");
+    fs.writeFileSync(path, contents, "utf8");
+  } catch (err) {
+    console.log("Error: getTodos failed");
+    console.log(err);
+  } finally {
+    if (fd !== undefined) fs.closeSync(fd);
+  }
+};
+
+let appendTodo = (path, todo) => appendFile(path, `${todo}${EOL}`);
+
+let overwriteTodos = (path, todos) => {
+  let contents = "";
+  if (todos.length > 0) {
+    contents = todos.join(EOL) + EOL; // add trailing EOL for final todo
+  }
+  writeFile(path, contents);
 };
 
 let todosTxtFile = path.resolve(__dirname, "todo.txt");
@@ -51,7 +74,7 @@ if (process.argv.length > 2) {
     case "add":
       if (args.length > 0) {
         let todo = args[0];
-        saveTodo(todosTxtFile, todo);
+        appendTodo(todosTxtFile, todo);
         console.log(`Added todo: "${todo}"`);
       } else {
         console.log("Error: Missing todo string. Nothing added!");
@@ -59,12 +82,29 @@ if (process.argv.length > 2) {
       break;
     case "ls":
       let formatTodo = (todo, no) => `[${no}] ${todo}`;
-      let result = parseTodos(todosTxtFile)
-        .map((todo, i) => formatTodo(todo, i + 1))
-        .join("\n");
-      console.log(result);
+      let todos = parseTodos(todosTxtFile);
+
+      if (todos.length > 0) {
+        let result = todos.map((todo, i) => formatTodo(todo, i + 1)).join("\n");
+        console.log(result);
+      }
       break;
     case "del":
+      if (args.length > 0) {
+        let todoNumber = parseInt(args[0]);
+        let todos = parseTodos(todosTxtFile);
+
+        if (todoNumber > 0 && todoNumber <= todos.length) {
+          let filtered = todos.filter((_, i) => todoNumber !== i + 1);
+          overwriteTodos(todosTxtFile, filtered);
+          console.log(`Deleted todo#${todoNumber}!`);
+        } else {
+          console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
+        }
+      } else {
+        console.log("Error: Missing NUMBER for deleting todo.");
+      }
+      break;
     case "done":
     default:
       console.log(`${action} is not implemented`);
