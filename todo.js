@@ -50,10 +50,11 @@ if (process.argv.length > 2) {
       break;
     case "add":
       if (args.length > 0) {
-        saveTodo(todosTxtFile, args[0]);
-
-        let todos = parseTodos(todosTxtFile);
-        todos.forEach((t, i) => console.log(`${i + 1}. ${t}`));
+        let todo = args[0];
+        saveTodo(todosTxtFile, todo);
+        console.log(`Added todo: ${todo}`);
+        // let todos = parseTodos(todosTxtFile);
+        // todos.forEach((t, i) => console.log(`${i + 1}. ${t}`));
       } else {
         console.log("Error: Missing todo string. Nothing added!");
       }

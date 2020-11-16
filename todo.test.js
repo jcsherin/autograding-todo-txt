@@ -36,22 +36,22 @@ test("prints help", () => {
 test("add a single todo", () => {
   let cli = ["node", [`${__dirname}/todo.js`, "add", "the thing i need to do"]];
 
-  let expected = `1. the thing i need to do\n`;
+  let expected = `Added todo: the thing i need to do\n`;
 
   let received = execSync(todoTxtCli("add", '"the thing i need to do"')).toString("utf8");
   expect(received).toBe(expected);
 });
 
 test("add multiple todos", () => {
-  let expected = `1. first todo\n`;
+  let expected = `Added todo: first todo\n`;
   let received = execSync(todoTxtCli("add", '"first todo"')).toString("utf8");
   expect(received).toBe(expected);
 
-  expected = `1. first todo\n2. second todo\n`;
+  expected = `Added todo: second todo\n`;
   received = execSync(todoTxtCli("add", '"second todo"')).toString("utf8");
   expect(received).toBe(expected);
 
-  expected = `1. first todo\n2. second todo\n3. third todo\n`;
+  expected = `Added todo: third todo\n`;
   received = execSync(todoTxtCli("add", '"third todo"')).toString("utf8");
   expect(received).toBe(expected);
 });
