@@ -65,50 +65,66 @@ $ node todo.js del NUMBER       # Delete a todo
 $ node todo.js done NUMBER      # Complete a todo
 $ node todo.js help             # Show usage`;
 
-if (process.argv.length > 2) {
-  let [action, ...args] = process.argv.slice(2);
-  switch (action) {
-    case "help":
-      console.log(usage);
-      break;
-    case "add":
-      if (args.length > 0) {
-        let todo = args[0];
-        appendTodo(todosTxtFile, todo);
-        console.log(`Added todo: "${todo}"`);
-      } else {
-        console.log("Error: Missing todo string. Nothing added!");
-      }
-      break;
-    case "ls":
-      let formatTodo = (todo, no) => `[${no}] ${todo}`;
+if (process.argv.length <= 2) {
+  console.log(usage);
+  process.exit();
+}
+
+let [action, ...args] = process.argv.slice(2);
+switch (action) {
+  case "help":
+    console.log(usage);
+    break;
+  case "add":
+    if (args.length > 0) {
+      let todo = args[0];
+      appendTodo(todosTxtFile, todo);
+      console.log(`Added todo: "${todo}"`);
+    } else {
+      console.log("Error: Missing todo string. Nothing added!");
+    }
+    break;
+  case "ls":
+    let formatTodo = (todo, no) => `[${no}] ${todo}`;
+    let todos = parseTodos(todosTxtFile);
+
+    if (todos.length > 0) {
+      let result = todos.map((todo, i) => formatTodo(todo, i + 1)).join("\n");
+      console.log(result);
+    }
+    break;
+  case "del":
+    if (args.length > 0) {
+      let todoNumber = parseInt(args[0]);
       let todos = parseTodos(todosTxtFile);
 
-      if (todos.length > 0) {
-        let result = todos.map((todo, i) => formatTodo(todo, i + 1)).join("\n");
-        console.log(result);
-      }
-      break;
-    case "del":
-      if (args.length > 0) {
-        let todoNumber = parseInt(args[0]);
-        let todos = parseTodos(todosTxtFile);
-
-        if (todoNumber > 0 && todoNumber <= todos.length) {
-          let filtered = todos.filter((_, i) => todoNumber !== i + 1);
-          overwriteTodos(todosTxtFile, filtered);
-          console.log(`Deleted todo#${todoNumber}!`);
-        } else {
-          console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
-        }
+      if (todoNumber > 0 && todoNumber <= todos.length) {
+        let filtered = todos.filter((_, i) => todoNumber !== i + 1);
+        overwriteTodos(todosTxtFile, filtered);
+        console.log(`Deleted todo#${todoNumber}!`);
       } else {
-        console.log("Error: Missing NUMBER for deleting todo.");
+        console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
       }
-      break;
-    case "done":
-    default:
-      console.log(`${action} is not implemented`);
-  }
-} else {
-  console.log(usage);
+    } else {
+      console.log("Error: Missing NUMBER for deleting todo.");
+    }
+    break;
+  case "done":
+    if (args.length > 0) {
+      let todoNumber = parseInt(args[0]);
+      let todos = parseTodos(todosTxtFile);
+
+      if (todoNumber > 0 && todoNumber <= todos.length) {
+        let filtered = todos.filter((_, i) => todoNumber !== i + 1);
+        overwriteTodos(todosTxtFile, filtered);
+        console.log(`Deleted todo#${todoNumber}!`);
+      } else {
+        console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
+      }
+    } else {
+      console.log("Error: Missing NUMBER for deleting todo.");
+    }
+    break;
+  default:
+    console.log(`${action} is not implemented`);
 }
