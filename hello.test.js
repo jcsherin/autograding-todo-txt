@@ -1,16 +1,14 @@
-const { exec, spawn } = require("child_process");
+const { spawn } = require("child_process");
 
-test("runs `node hello.js`", (done) => {
-  const helloCli = spawn(`node`, [`${__dirname}/hello.js`]);
+let testCli = (cli, expected, done) => {
+  const process = spawn(...cli);
 
   let received = "";
-  let expected = "Hello world!\n";
-
-  helloCli.stdout.on("data", (data) => {
+  process.stdout.on("data", (data) => {
     received = received + data.toString("utf8");
   });
 
-  helloCli.on("close", (code) => {
+  process.on("close", (code) => {
     if (code !== 0) {
       done(`process exited with code ${code}`);
     } else {
@@ -19,11 +17,19 @@ test("runs `node hello.js`", (done) => {
     }
   });
 
-  helloCli.stderr.on("data", (data) => {
+  process.stderr.on("data", (data) => {
     done(data);
   });
 
-  helloCli.on("error", (error) => {
+  process.on("error", (error) => {
     done(error.message);
   });
+};
+
+// format in which `spawn` function expects arguments
+let argsForCli = [`node`, [`${__dirname}/hello.js`]];
+
+test("foobar", (done) => {
+  let expected = "Hello world!\n";
+  testCli(argsForCli, expected, done);
 });
