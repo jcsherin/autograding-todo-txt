@@ -1,13 +1,23 @@
 const { spawn } = require("child_process");
 
-let testCli = (cli, expected, done) => {
+let testStdout = ({ cli, expected, done }) => {
+  // cli : array[2]
+  // array[0] : name of the process
+  // array[1] : arrays of arguments to the process
+  //
+  // Example:
+  // let cli = [node, [`${__dirname}/hello.js`]]
+
   const process = spawn(...cli);
 
+  // accumulator for streaming data
   let received = "";
   process.stdout.on("data", (data) => {
     received = received + data.toString("utf8");
   });
 
+  // when finished receiving streaming data
+  // match received against expected
   process.on("close", (code) => {
     if (code !== 0) {
       done(`process exited with code ${code}`);
@@ -26,10 +36,10 @@ let testCli = (cli, expected, done) => {
   });
 };
 
-// format in which `spawn` function expects arguments
-let argsForCli = [`node`, [`${__dirname}/hello.js`]];
-
 test("foobar", (done) => {
-  let expected = "Hello world!\n";
-  testCli(argsForCli, expected, done);
+  testStdout({
+    cli: [`node`, [`${__dirname}/hello.js`]],
+    expected: "Hello world!\n",
+    done: done,
+  });
 });
