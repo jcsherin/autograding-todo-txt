@@ -55,3 +55,14 @@ test("add multiple todos", () => {
   received = execSync(todoTxtCli("add", '"third todo"')).toString("utf8");
   expect(received).toBe(expected);
 });
+
+test("list remaining todos", () => {
+  let expected = `[1] thing i need to do\n[2] water plants\n[3] find nemo\n`;
+
+  execSync(todoTxtCli("add", '"thing i need to do"'));
+  execSync(todoTxtCli("add", '"water plants"'));
+  execSync(todoTxtCli("add", '"find nemo"'));
+
+  let received = execSync(todoTxtCli("ls")).toString("utf8");
+  expect(received).toBe(expected);
+});

@@ -53,13 +53,17 @@ if (process.argv.length > 2) {
         let todo = args[0];
         saveTodo(todosTxtFile, todo);
         console.log(`Added todo: ${todo}`);
-        // let todos = parseTodos(todosTxtFile);
-        // todos.forEach((t, i) => console.log(`${i + 1}. ${t}`));
       } else {
         console.log("Error: Missing todo string. Nothing added!");
       }
       break;
     case "ls":
+      let formatTodo = (todo, no) => `[${no}] ${todo}`;
+      let result = parseTodos(todosTxtFile)
+        .map((todo, i) => formatTodo(todo, i + 1))
+        .join("\n");
+      console.log(result);
+      break;
     case "del":
     case "done":
     default:
