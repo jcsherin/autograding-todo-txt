@@ -52,7 +52,7 @@ if (process.argv.length > 2) {
       if (args.length > 0) {
         let todo = args[0];
         saveTodo(todosTxtFile, todo);
-        console.log(`Added todo: ${todo}`);
+        console.log(`Added todo: "${todo}"`);
       } else {
         console.log("Error: Missing todo string. Nothing added!");
       }

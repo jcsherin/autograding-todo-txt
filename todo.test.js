@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { execSync } = require("child_process");
+const { execSync, exec } = require("child_process");
 
 let deleteFile = (path) => {
   try {
@@ -36,32 +36,31 @@ test("prints help", () => {
 test("add a single todo", () => {
   let cli = ["node", [`${__dirname}/todo.js`, "add", "the thing i need to do"]];
 
-  let expected = `Added todo: the thing i need to do\n`;
+  let expected = `Added todo: "the thing i need to do"\n`;
 
   let received = execSync(todoTxtCli("add", '"the thing i need to do"')).toString("utf8");
   expect(received).toBe(expected);
 });
 
 test("add multiple todos", () => {
-  let expected = `Added todo: first todo\n`;
-  let received = execSync(todoTxtCli("add", '"first todo"')).toString("utf8");
-  expect(received).toBe(expected);
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
 
-  expected = `Added todo: second todo\n`;
-  received = execSync(todoTxtCli("add", '"second todo"')).toString("utf8");
-  expect(received).toBe(expected);
-
-  expected = `Added todo: third todo\n`;
-  received = execSync(todoTxtCli("add", '"third todo"')).toString("utf8");
-  expect(received).toBe(expected);
+  todos.forEach((todo, i) => {
+    let expected = `Added todo: "${todo}"\n`;
+    let received = execSync(todoTxtCli("add", `"${todo}"`)).toString("utf8");
+    expect(received).toBe(expected);
+  });
 });
 
 test("list remaining todos", () => {
-  let expected = `[1] thing i need to do\n[2] water plants\n[3] find nemo\n`;
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
 
-  execSync(todoTxtCli("add", '"thing i need to do"'));
-  execSync(todoTxtCli("add", '"water plants"'));
-  execSync(todoTxtCli("add", '"find nemo"'));
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  let expected = `[1] the thing i need to do
+[2] water the plants
+[3] find needle in the haystack
+`;
 
   let received = execSync(todoTxtCli("ls")).toString("utf8");
   expect(received).toBe(expected);
