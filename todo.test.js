@@ -1,5 +1,6 @@
-const { expectStdoutToBe } = require("./cliTestHelper");
+const { runCommand, expectStdoutToBe } = require("./cliTestHelper");
 const fs = require("fs");
+const { execSync } = require("child_process");
 
 let deleteFile = (path) => {
   try {
@@ -43,19 +44,18 @@ test("add single todo", (done) => {
   expectStdoutToBe({ cli, expected, done });
 });
 
-test("add multiple todos", (done) => {
-  let cli = (todo) => ["node", [`${__dirname}/todo.js`, "add", todo]];
+let todoTxtCli = (...args) => ["node", `${__dirname}/todo.js`, ...args].join(" ");
 
-  let todos = ["the thing i need to do", "another todo", "last thing i need to take care of"];
+test("add multiple todos", () => {
+  let expected = `1. first todo\n`;
+  let received = execSync(todoTxtCli("add", '"first todo"')).toString("utf8");
+  expect(received).toBe(expected);
 
-  let expected = [
-    `1. the thing i need to do`,
-    `1. the thing i need to do
-2. another todo`,
-    `1. the thing i need to do
-2. another todo
-3. last thing i need to take care of`,
-  ];
+  expected = `1. first todo\n2. second todo\n`;
+  received = execSync(todoTxtCli("add", '"second todo"')).toString("utf8");
+  expect(received).toBe(expected);
 
-  todos.forEach((t, i) => expectStdoutToBe({ cli: cli(t), expected: expected[i], done }));
+  expected = `1. first todo\n2. second todo\n3. third todo\n`;
+  received = execSync(todoTxtCli("add", '"third todo"')).toString("utf8");
+  expect(received).toBe(expected);
 });

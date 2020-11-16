@@ -30,7 +30,8 @@ let expectStdoutToBe = ({ cli, expected, done }) => {
   });
 
   process.stderr.on("data", (data) => {
-    done(data);
+    console.log(`stderr: ${data}`);
+    done(data.toString("utf8"));
   });
 
   process.on("error", (error) => {
