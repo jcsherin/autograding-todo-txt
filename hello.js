@@ -1,5 +1,1 @@
-function hello() {
-  return "Hello!";
-}
-
-module.exports = hello;
+console.log("Hello world!");
