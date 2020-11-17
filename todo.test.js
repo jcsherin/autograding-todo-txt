@@ -70,6 +70,13 @@ test("list todos in reverse order (added latest first)", () => {
   expect(received).toBe(expected);
 });
 
+test("list when there are no remaining todos", () => {
+  let expected = ``;
+  let received = execSync(todoTxtCli("ls")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
+
 test("delete a todo", () => {
   let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
   todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));

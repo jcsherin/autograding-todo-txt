@@ -20,6 +20,14 @@ let parseTodos = (path) => {
   return todos;
 };
 
+let ddMmYyyy = () => {
+  const o_date = new Intl.DateTimeFormat();
+  const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
+  const { day, month, year } = o_date.formatToParts().reduce(f_date, {});
+
+  return `${day}/${month}/${year}`;
+};
+
 let appendFile = (path, contents) => {
   let fd;
   try {
@@ -57,6 +65,7 @@ let overwriteTodos = (path, todos) => {
 };
 
 let todosTxtFile = path.resolve(__dirname, "todo.txt");
+let doneTxtFile = path.resolve(__dirname, "done.txt");
 
 let usage = `Usage :-
 $ node todo.js add "todo item"  # Add a new todo
@@ -113,6 +122,27 @@ switch (action) {
     }
     break;
   case "done":
+    if (args.length > 0) {
+      let todoNumber = parseInt(args[0]);
+      let todos = parseTodos(todosTxtFile);
+
+      if (todoNumber > 0 && todoNumber <= todos.length) {
+        let filtered = todos.filter((_, i) => todoNumber !== i + 1);
+        overwriteTodos(todosTxtFile, filtered);
+
+        let date = ddMmYyyy();
+        let done = `${date} x ${todos[todoNumber - 1]}`;
+        appendTodo(doneTxtFile, done);
+
+        console.log(`Marked todo #${todoNumber} as done.`);
+      } else {
+        console.log(`Error: todo #${todoNumber} does not exist.`);
+      }
+    } else {
+      console.log("Error: Missing NUMBER for marking todo as done.");
+    }
+    break;
+
   default:
     console.log(`${action} is not implemented`);
 }
