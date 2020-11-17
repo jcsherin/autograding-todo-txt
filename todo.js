@@ -106,28 +106,22 @@ switch (action) {
         overwriteTodos(todosTxtFile, filtered);
         console.log(`Deleted todo #${todoNumber}`);
       } else {
-        console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
+        console.log(`Error: todo #${todoNumber} does not exist. Nothing deleted.`);
       }
     } else {
       console.log("Error: Missing NUMBER for deleting todo.");
     }
     break;
   case "done":
-    if (args.length > 0) {
-      let todoNumber = parseInt(args[0]);
-      let todos = parseTodos(todosTxtFile);
-
-      if (todoNumber > 0 && todoNumber <= todos.length) {
-        let filtered = todos.filter((_, i) => todoNumber !== i + 1);
-        overwriteTodos(todosTxtFile, filtered);
-        console.log(`Deleted todo#${todoNumber}!`);
-      } else {
-        console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
-      }
-    } else {
-      console.log("Error: Missing NUMBER for deleting todo.");
-    }
-    break;
   default:
     console.log(`${action} is not implemented`);
 }
+
+/**
+ * TODO
+ * - move completed todos from todo.txt to done.txt (append)
+ * - show completed todos in reverse order (recently completed first)
+ * - report / summarize
+ * - add tests for everything
+ * - refactor: cli, model, tests
+ */
