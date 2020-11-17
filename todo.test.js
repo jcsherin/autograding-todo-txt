@@ -115,3 +115,10 @@ test("delete non-existent todos", () => {
     expect(received).toBe(expected);
   });
 });
+
+test("delete does not have enough arguments", () => {
+  let expected = `Error: Missing NUMBER for deleting todo.${EOL}`;
+  let received = execSync(todoTxtCli("del")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
