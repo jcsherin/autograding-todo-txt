@@ -3,7 +3,7 @@ const path = require("path");
 const { EOL } = require("os");
 const { ddMmYyyy } = require("./utils");
 
-let createIfFileNotExist = (path, callback) => {
+let touchFileAnd = (path, callback) => {
   let fd;
   try {
     fd = fs.openSync(path, "a");
@@ -22,7 +22,7 @@ let doneTxtFile = path.resolve(__dirname, "done.txt");
 let parseTodos = () => {
   let contents = "";
 
-  createIfFileNotExist(todosTxtFile, () => {
+  touchFileAnd(todosTxtFile, () => {
     contents = fs.readFileSync(todosTxtFile, "utf8");
   });
 
@@ -32,17 +32,12 @@ let parseTodos = () => {
   return todos;
 };
 
-let appendFile = (path, contents) => {
-  let fd;
-  try {
-    fd = fs.openSync(path, "a");
+let appendTodo = (path, todo) => {
+  let contents = `${todo}${EOL}`;
+
+  touchFileAnd(path, () => {
     fs.appendFileSync(path, contents, "utf8");
-  } catch (err) {
-    console.log("Error: getTodos failed");
-    console.log(err);
-  } finally {
-    if (fd !== undefined) fs.closeSync(fd);
-  }
+  });
 };
 
 let writeFile = (path, contents) => {
@@ -57,8 +52,6 @@ let writeFile = (path, contents) => {
     if (fd !== undefined) fs.closeSync(fd);
   }
 };
-
-let appendTodo = (path, todo) => appendFile(path, `${todo}${EOL}`);
 
 let overwriteTodos = (path, todos) => {
   let contents = "";
