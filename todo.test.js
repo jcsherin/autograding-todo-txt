@@ -104,4 +104,14 @@ test("delete first todo item 3 times", () => {
   });
 });
 
+test("delete non-existent todos", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
 
+  [0, 4, 5].forEach((n) => {
+    let expected = `Error: todo #${n} does not exist. Nothing deleted.${EOL}`;
+    let received = execSync(todoTxtCli("del", n.toString())).toString("utf8");
+
+    expect(received).toBe(expected);
+  });
+});
