@@ -89,7 +89,10 @@ switch (action) {
     let todos = parseTodos(todosTxtFile);
 
     if (todos.length > 0) {
-      let result = todos.map((todo, i) => formatTodo(todo, i + 1)).join("\n");
+      let result = todos
+        .map((todo, i) => formatTodo(todo, i + 1))
+        .reverse()
+        .join("\n");
       console.log(result);
     }
     break;
