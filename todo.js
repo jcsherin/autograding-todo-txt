@@ -3,17 +3,28 @@ const path = require("path");
 const { EOL } = require("os");
 const { ddMmYyyy } = require("./utils");
 
-let parseTodos = (path) => {
-  let fd, contents;
+let createIfFileNotExist = (path, callback) => {
+  let fd;
   try {
     fd = fs.openSync(path, "a");
-    contents = fs.readFileSync(path, "utf8");
+    callback();
   } catch (err) {
     console.log("Error: getTodos failed");
     console.log(err);
   } finally {
     if (fd !== undefined) fs.closeSync(fd);
   }
+};
+
+let todosTxtFile = path.resolve(__dirname, "todo.txt");
+let doneTxtFile = path.resolve(__dirname, "done.txt");
+
+let parseTodos = () => {
+  let contents = "";
+
+  createIfFileNotExist(todosTxtFile, () => {
+    contents = fs.readFileSync(todosTxtFile, "utf8");
+  });
 
   let todos = contents === "" ? [] : contents.split(EOL);
   todos.pop(); // remove last trailing newline which is not a todo
@@ -57,9 +68,6 @@ let overwriteTodos = (path, todos) => {
   writeFile(path, contents);
 };
 
-let todosTxtFile = path.resolve(__dirname, "todo.txt");
-let doneTxtFile = path.resolve(__dirname, "done.txt");
-
 let usage = `Usage :-
 $ node todo.js add "todo item"  # Add a new todo
 $ node todo.js ls               # Show remaining todos
@@ -89,7 +97,7 @@ switch (action) {
     break;
   case "ls":
     let formatTodo = (todo, no) => `[${no}] ${todo}`;
-    let todos = parseTodos(todosTxtFile);
+    let todos = parseTodos();
 
     if (todos.length > 0) {
       let result = todos
@@ -102,7 +110,7 @@ switch (action) {
   case "del":
     if (args.length > 0) {
       let todoNumber = parseInt(args[0]);
-      let todos = parseTodos(todosTxtFile);
+      let todos = parseTodos();
 
       if (todoNumber > 0 && todoNumber <= todos.length) {
         let filtered = todos.filter((_, i) => todoNumber !== i + 1);
@@ -118,7 +126,7 @@ switch (action) {
   case "done":
     if (args.length > 0) {
       let todoNumber = parseInt(args[0]);
-      let todos = parseTodos(todosTxtFile);
+      let todos = parseTodos();
 
       if (todoNumber > 0 && todoNumber <= todos.length) {
         let filtered = todos.filter((_, i) => todoNumber !== i + 1);
@@ -138,7 +146,7 @@ switch (action) {
     break;
   case "report":
     let date = ddMmYyyy();
-    let pendingTodos = parseTodos(todosTxtFile).length;
+    let pendingTodos = parseTodos().length;
     let completedTodos = 0;
     try {
       completedTodos = fs.readFileSync(doneTxtFile, "utf8").split("\n").length - 1; // do not count trailing newline;
