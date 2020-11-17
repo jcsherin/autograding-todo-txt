@@ -40,25 +40,12 @@ let appendTodo = (path, todo) => {
   });
 };
 
-let writeFile = (path, contents) => {
-  let fd;
-  try {
-    fd = fs.openSync(path, "a");
-    fs.writeFileSync(path, contents, "utf8");
-  } catch (err) {
-    console.log("Error: getTodos failed");
-    console.log(err);
-  } finally {
-    if (fd !== undefined) fs.closeSync(fd);
-  }
-};
+let overwriteTodos = (todos) => {
+  let contents = todos.map((todo) => `${todo}${EOL}`).join("");
 
-let overwriteTodos = (path, todos) => {
-  let contents = "";
-  if (todos.length > 0) {
-    contents = todos.join(EOL) + EOL; // add trailing EOL for final todo
-  }
-  writeFile(path, contents);
+  touchFileAnd(todosTxtFile, () => {
+    fs.writeFileSync(todosTxtFile, contents, "utf8");
+  });
 };
 
 let usage = `Usage :-
@@ -107,7 +94,7 @@ switch (action) {
 
       if (todoNumber > 0 && todoNumber <= todos.length) {
         let filtered = todos.filter((_, i) => todoNumber !== i + 1);
-        overwriteTodos(todosTxtFile, filtered);
+        overwriteTodos(filtered);
         console.log(`Deleted todo #${todoNumber}`);
       } else {
         console.log(`Error: todo #${todoNumber} does not exist. Nothing deleted.`);
@@ -123,7 +110,7 @@ switch (action) {
 
       if (todoNumber > 0 && todoNumber <= todos.length) {
         let filtered = todos.filter((_, i) => todoNumber !== i + 1);
-        overwriteTodos(todosTxtFile, filtered);
+        overwriteTodos(filtered);
 
         let date = ddMmYyyy();
         let done = `x ${date} ${todos[todoNumber - 1]}`;
