@@ -104,7 +104,7 @@ switch (action) {
       if (todoNumber > 0 && todoNumber <= todos.length) {
         let filtered = todos.filter((_, i) => todoNumber !== i + 1);
         overwriteTodos(todosTxtFile, filtered);
-        console.log(`Deleted todo#${todoNumber}!`);
+        console.log(`Deleted todo #${todoNumber}`);
       } else {
         console.log(`Error: todo#${todoNumber} does not exist. Nothing deleted.`);
       }

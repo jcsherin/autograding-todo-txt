@@ -22,25 +22,27 @@ $ node todo.js help             # Show usage
 
 test("prints help when no additional args are provided", () => {
   let received = execSync(todoTxtCli()).toString("utf8");
+
   expect(received).toBe(usage);
 });
 
 test("prints help", () => {
   let received = execSync(todoTxtCli("help")).toString("utf8");
+
   expect(received).toBe(usage);
 });
 
 test("add a single todo", () => {
   let expected = `Added todo: "the thing i need to do"${EOL}`;
-
   let received = execSync(todoTxtCli("add", '"the thing i need to do"')).toString("utf8");
+
   expect(received).toBe(expected);
 });
 
 test("show error message when add is not followed by a todo", () => {
   let expected = "Error: Missing todo string. Nothing added!" + EOL;
-
   let received = execSync(todoTxtCli("add")).toString("utf8");
+
   expect(received).toBe(expected);
 });
 
@@ -50,20 +52,56 @@ test("add multiple todos", () => {
   todos.forEach((todo, i) => {
     let expected = `Added todo: "${todo}"${EOL}`;
     let received = execSync(todoTxtCli("add", `"${todo}"`)).toString("utf8");
+
     expect(received).toBe(expected);
   });
 });
 
 test("list todos in reverse order (added latest first)", () => {
   let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
-
   todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
 
   let expected = `[3] find needle in the haystack
 [2] water the plants
 [1] the thing i need to do
 `;
-
   let received = execSync(todoTxtCli("ls")).toString("utf8");
+
   expect(received).toBe(expected);
 });
+
+test("delete a todo", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  let expected = `Deleted todo #2${EOL}`;
+  let received = execSync(todoTxtCli("del", "2")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
+
+test("delete todos numbered 3, 2 & 1", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  [3, 2, 1].forEach((n) => {
+    let expected = `Deleted todo #${n}${EOL}`;
+    let received = execSync(todoTxtCli("del", n.toString())).toString("utf8");
+
+    expect(received).toBe(expected);
+  });
+});
+
+test("delete first todo item 3 times", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  [1, 1, 1].forEach((n) => {
+    let expected = `Deleted todo #${n}${EOL}`;
+    let received = execSync(todoTxtCli("del", n.toString())).toString("utf8");
+
+    expect(received).toBe(expected);
+  });
+});
+
+
