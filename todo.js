@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { EOL } = require("os");
+const { ddMmYyyy } = require("./utils");
 
 let parseTodos = (path) => {
   let fd, contents;
@@ -18,14 +19,6 @@ let parseTodos = (path) => {
   todos.pop(); // remove last trailing newline which is not a todo
 
   return todos;
-};
-
-let ddMmYyyy = () => {
-  const o_date = new Intl.DateTimeFormat();
-  const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
-  const { day, month, year } = o_date.formatToParts().reduce(f_date, {});
-
-  return `${day}/${month}/${year}`;
 };
 
 let appendFile = (path, contents) => {
@@ -148,7 +141,7 @@ switch (action) {
     let pendingTodos = parseTodos(todosTxtFile).length;
     let completedTodos = 0;
     try {
-      completedTodos = fs.readFileSync(doneTxtFile, "utf8").split("\n").length;
+      completedTodos = fs.readFileSync(doneTxtFile, "utf8").split("\n").length - 1; // do not count trailing newline;
     } catch (_err) {
       completedTodos = 0;
     }

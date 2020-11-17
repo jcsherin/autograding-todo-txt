@@ -1,6 +1,7 @@
 const { EOL } = require("os");
 const fs = require("fs");
 const { execSync, exec } = require("child_process");
+const { ddMmYyyy } = require("./utils");
 
 let deleteFile = (path) => {
   try {
@@ -160,6 +161,20 @@ test("mark as done without providing a todo number", () => {
 
   let expected = `Error: Missing NUMBER for marking todo as done.${EOL}`;
   let received = execSync(todoTxtCli("done")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
+
+test("report pending & completed todos", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  execSync(todoTxtCli("done", "1"));
+  execSync(todoTxtCli("done", "2"));
+
+  let date = ddMmYyyy();
+  let expected = `${date} Pending : 1 Completed : 2${EOL}`;
+  let received = execSync(todoTxtCli("report")).toString("utf8");
 
   expect(received).toBe(expected);
 });
