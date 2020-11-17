@@ -129,3 +129,33 @@ test("delete does not have enough arguments", () => {
 
   expect(received).toBe(expected);
 });
+
+test("mark a todo as done", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  let expected = `Marked todo #2 as done.${EOL}`;
+  let received = execSync(todoTxtCli("done", "2")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
+
+test("mark as done a todo which does not exist", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  let expected = `Error: todo #0 does not exist.${EOL}`;
+  let received = execSync(todoTxtCli("done", "0")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
+
+test("mark as done without providing a todo number", () => {
+  let todos = ["the thing i need to do", "water the plants", "find needle in the haystack"];
+  todos.forEach((todo) => execSync(todoTxtCli("add", `"${todo}"`)));
+
+  let expected = `Error: Missing NUMBER for marking todo as done.${EOL}`;
+  let received = execSync(todoTxtCli("done")).toString("utf8");
+
+  expect(received).toBe(expected);
+});
