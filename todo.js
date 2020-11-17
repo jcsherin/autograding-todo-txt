@@ -72,7 +72,8 @@ $ node todo.js add "todo item"  # Add a new todo
 $ node todo.js ls               # Show remaining todos
 $ node todo.js del NUMBER       # Delete a todo
 $ node todo.js done NUMBER      # Complete a todo
-$ node todo.js help             # Show usage`;
+$ node todo.js help             # Show usage
+$ node todo.js report           # Statistics`;
 
 if (process.argv.length <= 2) {
   console.log(usage);
@@ -142,16 +143,19 @@ switch (action) {
       console.log("Error: Missing NUMBER for marking todo as done.");
     }
     break;
+  case "report":
+    let date = ddMmYyyy();
+    let pendingTodos = parseTodos(todosTxtFile).length;
+    let completedTodos = 0;
+    try {
+      completedTodos = fs.readFileSync(doneTxtFile, "utf8").split("\n").length;
+    } catch (_err) {
+      completedTodos = 0;
+    }
 
+    let report = `${date} Pending : ${pendingTodos} Completed : ${completedTodos}`;
+    console.log(report);
+    break;
   default:
-    console.log(`${action} is not implemented`);
+    console.log(`The action "${action}" is not understood. Try "help".`);
 }
-
-/**
- * TODO
- * - move completed todos from todo.txt to done.txt (append)
- * - show completed todos in reverse order (recently completed first)
- * - report / summarize
- * - add tests for everything
- * - refactor: cli, model, tests
- */

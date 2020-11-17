@@ -8,7 +8,10 @@ let deleteFile = (path) => {
   } catch (err) {}
 };
 
-beforeEach(() => deleteFile(`${__dirname}/todo.txt`));
+beforeEach(() => {
+  deleteFile(`${__dirname}/todo.txt`);
+  deleteFile(`${__dirname}/done.txt`);
+});
 
 let todoTxtCli = (...args) => ["node", `${__dirname}/todo.js`, ...args].join(" ");
 
@@ -18,6 +21,7 @@ $ node todo.js ls               # Show remaining todos
 $ node todo.js del NUMBER       # Delete a todo
 $ node todo.js done NUMBER      # Complete a todo
 $ node todo.js help             # Show usage
+$ node todo.js report           # Statistics
 `;
 
 test("prints help when no additional args are provided", () => {
