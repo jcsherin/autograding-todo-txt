@@ -125,7 +125,7 @@ switch (action) {
         overwriteTodos(todosTxtFile, filtered);
 
         let date = ddMmYyyy();
-        let done = `${date} x ${todos[todoNumber - 1]}`;
+        let done = `x ${date} ${todos[todoNumber - 1]}`;
         appendTodo(doneTxtFile, done);
 
         console.log(`Marked todo #${todoNumber} as done.`);
