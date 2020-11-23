@@ -1,7 +1,14 @@
 const { EOL } = require("os");
 const fs = require("fs");
 const { execSync, exec } = require("child_process");
-const { ddMmYyyy } = require("./utils");
+
+let ddMmYyyy = () => {
+  const o_date = new Intl.DateTimeFormat();
+  const f_date = (m_ca, m_it) => Object({ ...m_ca, [m_it.type]: m_it.value });
+  const { day, month, year } = o_date.formatToParts().reduce(f_date, {});
+
+  return `${day}/${month}/${year}`;
+};
 
 let deleteFile = (path) => {
   try {
@@ -76,7 +83,7 @@ test("list todos in reverse order (added latest first)", () => {
 });
 
 test("list when there are no remaining todos", () => {
-  let expected = ``;
+  let expected = `There are no pending todos!`;
   let received = execSync(todoTxtCli("ls")).toString("utf8");
 
   expect(received).toBe(expected);
