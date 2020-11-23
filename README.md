@@ -2,6 +2,14 @@
 
 You have to implement a Todo app which has a command-line interface(CLI). The tests are failing right now. Write code to pass all automated tests.
 
+### Setup command
+
+`npm install`
+
+### Run automated tests
+
+`npm test`
+
 ## Specification
 
 The todo app has a command-line interface. For a Node.js implementation the command for running the app is `node todo.js`.
@@ -101,11 +109,3 @@ Use the `report` command to see the latest tally of pending and completed todos.
 $ node todo.js report
 dd/mm/yyyy Pending : 1 Completed : 4
 ```
-
-### Setup command
-
-`npm install`
-
-### Run automated tests
-
-`npm test`
